@@ -28,6 +28,45 @@ func main() {
 	}
 	fmt.Println("Connected to MongoDB!")
 
+	type (
+		User struct {
+			GUID         string
+			Name         string
+			RefreshToken string
+			AccessToken  string
+		}
+	)
+
+	users := client.Database("server").Collection("users")
+	
+	alex := User{
+		GUID:         "4aabc26c-55f5-4320-8635-33cc02023028",
+		Name:         "Alex",
+		RefreshToken: "",
+		AccessToken:  "",
+	}
+
+	peter := User{
+		GUID:         "36b1927d-8dcc-4a92-bf71-a75420d1ca25",
+		Name:         "Peter",
+		RefreshToken: "",
+		AccessToken:  "",
+	}
+
+	nick := User{
+		GUID:         "de6f996a-f8f0-4683-813d-7fb0a7f84656",
+		Name:         "Nick",
+		RefreshToken: "",
+		AccessToken:  "",
+	}
+
+	res, err := users.InsertMany(context.TODO(), []interface{}{alex, peter, nick})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Inserted multiple documents: ", res)
+	fmt.Println("Inserted ids: ", res.InsertedIDs)
+
 	r := mux.NewRouter()
 
 	r.Handle("/", http.FileServer(http.Dir("./views/"))).Methods("GET")
